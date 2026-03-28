@@ -11,6 +11,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import Header from "@/components/header";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -27,7 +28,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-
+      <Header/>
       <div className="max-w-6xl mx-auto px-4 py-10 space-y-10">
 
         {/* HEADER */}

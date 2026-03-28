@@ -23,7 +23,7 @@ export function Sidebar({
   const router = useRouter();
 
   return (
-    <div className="w-64 h-full md:mt-15 bg-background text-foreground flex flex-col">
+    <div className="w-64 h-full  bg-background text-foreground flex flex-col">
 
       {/* TOP */}
       <div className="p-3">

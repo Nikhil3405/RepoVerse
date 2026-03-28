@@ -3,7 +3,7 @@ from services.project_map_service import get_project_map
 import os 
 from config import REPO_STORAGE_PATH
 from pydantic import BaseModel
-from services.llm_service import generate_answer
+from services.storage_service import download_repo
 
 class FileExplainRequest(BaseModel):
     repo_id: str
@@ -12,30 +12,56 @@ class FileExplainRequest(BaseModel):
 router = APIRouter(prefix="/explorer", tags=["Repository Explorer"])
 
 @router.get("/tree/{repo_id}")
-def get_repo_tree(repo_id:str):
+def get_repo_tree(repo_id: str):
+
+    repo_path = os.path.join(REPO_STORAGE_PATH, repo_id)
+
+    # 🔹 Ensure repo exists locally
+    if not os.path.exists(repo_path):
+        try:
+            download_repo(repo_id, repo_path)
+        except Exception:
+            return {"error": "Repository not found."}
+
     project_map = get_project_map(repo_id)
+
     if not project_map:
         return {"error": "Repository not found."}
+
     return {
-        "directories": project_map.get("directories",[]),
-        "files": project_map.get("files",[])
+        "directories": project_map.get("directories", []),
+        "files": project_map.get("files", [])
     }
 
 @router.get("/file")
-def get_file(repo_id:str,path:str):
-    file_path = os.path.join(REPO_STORAGE_PATH,repo_id,path)
+def get_file(repo_id: str, path: str):
+
+    repo_path = os.path.join(REPO_STORAGE_PATH, repo_id)
+    file_path = os.path.join(REPO_STORAGE_PATH, repo_id, path.lstrip("/"))
+
+    # 🔹 Ensure repo exists locally
+    if not os.path.exists(repo_path):
+        try:
+            print("Repo not in /tmp, downloading from Supabase...")
+            download_repo(repo_id, repo_path)
+        except Exception as e:
+            return {"error": f"Repository not found: {str(e)}"}
+
+    # 🔹 Now check file
     if not os.path.exists(file_path):
         return {"error": "File not found."}
+
     try:
-        with open(file_path,"r",encoding="utf-8",errors="ignore") as f:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             content = f.read()
+
         return {
             "file_path": path,
             "content": content
         }
+
     except Exception as e:
         return {"error": str(e)}
-
 
 def split_code_blocks(code):
     blocks = code.split("\n\n")

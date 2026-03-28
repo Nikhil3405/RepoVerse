@@ -9,6 +9,7 @@ from services.message_service import store_message, get_messages
 from fastapi.responses import StreamingResponse
 from models.chat_model import ExplainFileRequest
 from services.supabase_client import supabase
+from services.repo_service import get_repo_by_id
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
@@ -21,30 +22,32 @@ class ChatRequest(BaseModel):
 
 @router.post("/ask")
 def ask_question(request: ChatRequest):
+    repo = get_repo_by_id(request.repo_id)
+
+    if not repo:
+        return {"error": "Repository not found"}
+
+    if repo["status"] != "completed":
+        return {"error": f"Repository is {repo['status']}"}
     def stream():
         try:
             store_message(request.conversation_id, "user", request.question)
             history = get_messages(request.conversation_id)
-            history = history[-6:]
+            history_text = "\n".join(
+                [f"{m['role']}: {m['content'][:500]}" for m in history]
+            )
             history_text = "\n".join(
                 [f"{m['role']}: {m['content']}" for m in history]
             )
             summary = get_repo_summary(request.repo_id) or "Repository summary not available."
-            print("repo_id type:", type(request.repo_id))
-            print("repo_id value:", request.repo_id)
             project_map = get_project_map(request.repo_id) or {
                 "directories": [],
                 "important_files": []
             }
-            print("repo_id type:", type(request.repo_id))
-            print("repo_id value:", request.repo_id)
-            code_context = retrieve_top_chunks(
-                request.repo_id,
-                request.question
-            )
-            print("repo_id type:", type(request.repo_id))
-            print("repo_id value:", request.repo_id)
+            code_context = retrieve_top_chunks(request.repo_id, request.question)
 
+            if not code_context:
+                code_context = "No relevant code context found."
             context = f"""
             You are an expert software engineer.
 
@@ -97,12 +100,12 @@ def explain_file(request: ExplainFileRequest):
             # 🔥 Store user message
             user_question = f"Explain this file: {request.file_path}"
             store_message(request.conversation_id, "user", user_question)
-
+            normalized_path = request.file_path.lstrip("/")
             # 🔹 Step 1: File-specific chunks
             file_chunks_res = supabase.table("code_embeddings")\
                 .select("chunk")\
                 .eq("repo_id", request.repo_id)\
-                .eq("file_path", request.file_path)\
+                .eq("file_path", normalized_path)\
                 .limit(8)\
                 .execute()
 

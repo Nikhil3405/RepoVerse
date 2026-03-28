@@ -10,7 +10,8 @@ from services.project_map_store import store_project_map
 from services.repo_summary_service import generate_repository_summary
 from services.repo_summary_store import store_repo_summary
 from services.repo_service import update_repo_status
-
+from services.storage_service import download_repo, upload_repo
+from services.supabase_client import supabase
 
 def process_repository(repo_url: str, repo_id: str):
     print(f"Processing repository: {repo_url}")
@@ -19,10 +20,32 @@ def process_repository(repo_url: str, repo_id: str):
     try:
         os.makedirs(REPO_STORAGE_PATH, exist_ok=True)
 
-        # 🔹 STEP 1: CLONING
+        # 🔹 STEP 1: FETCH REPO (Smart)
         update_repo_status(repo_id, "cloning")
-        print("Cloning repository...")
-        Repo.clone_from(repo_url, repo_path, depth=1)
+
+        if not os.path.exists(repo_path):
+            try:
+                print("Trying to download from Supabase...")
+                download_repo(repo_id, repo_path)
+                print("Downloaded from Supabase ✅")
+
+            except Exception as e:
+                print("Not found in storage, cloning from GitHub...")
+                
+                Repo.clone_from(repo_url, repo_path, depth=1)
+                print("Cloned from GitHub ✅")
+
+                try:
+                    print("Uploading to Supabase...")
+                    try:
+                        # check if file exists in Supabase
+                        supabase.storage.from_("repos").download(f"{repo_id}.zip")
+                        print("Already exists in storage, skipping upload")
+                    except:
+                        upload_repo(repo_id, repo_path)
+                    print("Uploaded to Supabase ✅")
+                except Exception as upload_err:
+                    print(f"Upload failed: {upload_err}")
 
         # 🔹 STEP 2: PROJECT MAP
         update_repo_status(repo_id, "mapping")

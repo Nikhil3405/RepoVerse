@@ -12,6 +12,7 @@ import {
   Code2,
   ArrowRight,
 } from "lucide-react";
+import Header from "@/components/header";
 
 export default async function Home() {
   const { userId } = await auth();
@@ -19,9 +20,9 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-
+      <Header/>
       {/* HERO */}
-      <section className="px-4 py-20 md:py-28 text-center max-w-4xl mx-auto">
+      <section className="px-4 py-12 text-center max-w-4xl mx-auto">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
           Understand any codebase
         </h1>
@@ -74,21 +75,9 @@ export default async function Home() {
         />
       </section>
 
-      {/* WORKFLOW */}
-      <section className="px-4 py-20 max-w-5xl mx-auto text-center">
-        <h2 className="text-2xl md:text-4xl font-semibold tracking-tight">
-          How it works
-        </h2>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          <Step step="01" title="Paste URL" />
-          <Step step="02" title="AI Analysis" />
-          <Step step="03" title="Explore" />
-        </div>
-      </section>
 
       {/* FOOTER */}
-      <footer className="text-center text-sm py-8 border-t">
+      <footer className="text-center text-sm py-8">
         <p className="text-muted-foreground">
           © {new Date().getFullYear()} VectorAI
         </p>

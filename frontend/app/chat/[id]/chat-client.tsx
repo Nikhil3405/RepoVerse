@@ -16,6 +16,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import Header from "@/components/header";
 
 interface Props {
   conversationId: string;
@@ -52,61 +53,40 @@ export default function ChatClient({ conversationId, repoId }: Props) {
   useEffect(() => {
     document.body.style.overflow = activePanel ? "hidden" : "auto";
   }, [activePanel]);
-
   return (
-    <div className="h-dvh flex bg-background text-foreground overflow-hidden ">
-      {/* MOBILE HEADER */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 h-12 border-b bg-background/80 backdrop-blur">
-        <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu size={18} />
-            </Button>
-          </SheetTrigger>
+    <div className="h-dvh bg-background text-foreground overflow-hidden">
+      {/* HEADER */}
+      <Header
+        isChatPage
+        repoId={repoId}
+        onSelectFile={loadFile}
+        onOpenDiagram={() => setActivePanel("diagram")}
+        activePanel={activePanel}
+      />
 
-          <SheetContent side="left" className="w-64 p-0">
-            <SheetHeader className="p-3 border-b">
-              <SheetTitle className="text-sm">Navigation</SheetTitle>
-            </SheetHeader>
+      {/* MAIN LAYOUT (below header) */}
+      <div className="flex h-[calc(100dvh-56px)]">
+        {/* SIDEBAR DESKTOP */}
+        <aside className="hidden lg:flex w-64 border-r shrink-0">
+          <Sidebar
+            repoId={repoId}
+            onSelectFile={loadFile}
+            onOpenDiagram={() => setActivePanel("diagram")}
+            activePanel={activePanel}
+          />
+        </aside>
 
-            <Sidebar
-              repoId={repoId}
-              onSelectFile={(file) => {
-                loadFile(file);
-                setIsSidebarOpen(false); // ✅ CLOSE
-              }}
-              onOpenDiagram={() => {
-                setActivePanel("diagram");
-                setIsSidebarOpen(false); // ✅ CLOSE
-              }}
-              activePanel={activePanel}
-            />
-          </SheetContent>
-        </Sheet>
-        <span className="text-sm font-medium">Chat</span>
-        <div className="w-8" /> {/* spacer */}
-      </div>
-
-      {/* SIDEBAR DESKTOP */}
-      <aside className="hidden lg:flex w-64 border-r">
-        <Sidebar
-          repoId={repoId}
-          onSelectFile={loadFile}
-          onOpenDiagram={() => setActivePanel("diagram")}
-          activePanel={activePanel}
-        />
-      </aside>
-
-      {/* MAIN CHAT */}
-      <div className="flex-1 flex flex-col md:mt-15 min-h-0 pt-12 lg:pt-0">
-        <ChatWindow
-          conversationId={conversationId}
-          repoId={repoId}
-          messages={messages}
-          setMessages={setMessages}
-          addMessage={addMessage}
-          updateLastMessage={updateLastMessage}
-        />
+        {/* MAIN CHAT */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <ChatWindow
+            conversationId={conversationId}
+            repoId={repoId}
+            messages={messages}
+            setMessages={setMessages}
+            addMessage={addMessage}
+            updateLastMessage={updateLastMessage}
+          />
+        </div>
       </div>
 
       {/* RIGHT PANEL */}
