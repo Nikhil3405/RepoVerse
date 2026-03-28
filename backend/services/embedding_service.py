@@ -1,7 +1,17 @@
 from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer("BAAI/bge-small-en")
+model = None
 
-def generate_embedding(text:str):
+def get_model():
+    global model
+    if model is None:
+        print("🔄 Loading embedding model...")
+        model = SentenceTransformer("BAAI/bge-small-en")
+        print("✅ Model loaded")
+    return model
+
+
+def generate_embedding(text: str):
+    model = get_model()
     embedding = model.encode(text)
     return embedding.tolist()
