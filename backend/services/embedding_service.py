@@ -6,7 +6,7 @@ def get_model():
     global model
     if model is None:
         print("🔄 Loading embedding model...")
-        model = SentenceTransformer("BAAI/bge-small-en")
+        model = SentenceTransformer("BAAI/bge-small-en",device="cpu")
         print("✅ Model loaded")
     return model
 

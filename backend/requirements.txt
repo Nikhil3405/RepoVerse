@@ -5,3 +5,4 @@ gitpython
 sentence-transformers
 supabase
 groq
+torch
