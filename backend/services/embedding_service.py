@@ -1,17 +1,15 @@
-from sentence_transformers import SentenceTransformer
+from google import genai
+import os
+from dotenv import load_dotenv
+from google.genai import types
+load_dotenv()
 
-model = None
-
-def get_model():
-    global model
-    if model is None:
-        print("🔄 Loading embedding model...")
-        model = SentenceTransformer("BAAI/bge-small-en",device="cpu")
-        print("✅ Model loaded")
-    return model
-
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def generate_embedding(text: str):
-    model = get_model()
-    embedding = model.encode(text)
-    return embedding.tolist()
+    response = client.models.embed_content(
+        model="gemini-embedding-001", 
+        contents=text,
+        config=types.EmbedContentConfig(output_dimensionality=768)
+    )
+    return response.embeddings[0].values
