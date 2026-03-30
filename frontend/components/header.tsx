@@ -17,6 +17,7 @@ import {
 
 import { useEffect, useState } from "react";
 import { Sidebar } from "@/components/sidebar";
+import Image from "next/image";
 
 interface HeaderProps {
   isChatPage?: boolean;
@@ -82,11 +83,11 @@ export default function Header({
 
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="border rounded-md p-1 transition group-hover:scale-105">
-              <Code2 className="w-4 h-4" />
+            <div className="p-1 transition group-hover:scale-105">
+              <Image src="/favicon.ico" alt="Logo" width={29} height={29} className="dark:invert" />
             </div>
             <span className="text-base font-semibold tracking-tight">
-              VectorAI
+              RepoVerse
             </span>
           </Link>
         </div>

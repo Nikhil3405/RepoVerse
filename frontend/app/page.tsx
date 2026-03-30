@@ -79,7 +79,7 @@ export default async function Home() {
       {/* FOOTER */}
       <footer className="text-center text-sm py-8">
         <p className="text-muted-foreground">
-          © {new Date().getFullYear()} VectorAI
+          © {new Date().getFullYear()} RepoVerse
         </p>
       </footer>
     </div>
