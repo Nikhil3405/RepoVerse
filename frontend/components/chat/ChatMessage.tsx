@@ -7,6 +7,7 @@ import { User, Bot, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function ChatMessage({ message }: { message: Message }) {
   const isUser = message.role === "user";
@@ -28,7 +29,7 @@ export default function ChatMessage({ message }: { message: Message }) {
       {/* AVATAR (only for assistant for cleaner look) */}
       {!isUser && (
         <div className="w-7 h-7 flex items-center justify-center border rounded-md text-muted-foreground shrink-0">
-          <Bot size={14} />
+          <Image src="/favicon.ico" alt="Bot" width={14} height={14} />
         </div>
       )}
 
