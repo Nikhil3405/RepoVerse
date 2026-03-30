@@ -29,7 +29,7 @@ export default function ChatMessage({ message }: { message: Message }) {
       {/* AVATAR (only for assistant for cleaner look) */}
       {!isUser && (
         <div className="w-7 h-7 flex items-center justify-center border rounded-md text-muted-foreground shrink-0">
-          <Image src="/favicon.ico" alt="Bot" width={14} height={14} />
+          <Image src="/favicon.ico" alt="Bot" width={14} height={14} className="dark:invert" />
         </div>
       )}
 
@@ -98,7 +98,7 @@ export default function ChatMessage({ message }: { message: Message }) {
 
       {/* USER AVATAR (right side) */}
       {isUser && (
-        <div className="w-7 h-7 flex items-center justify-center border rounded-md text-muted-foreground shrink-0">
+        <div className="w-7 h-7 flex items-center justify-center border rounded-md text-foreground shrink-0">
           <User size={14} />
         </div>
       )}

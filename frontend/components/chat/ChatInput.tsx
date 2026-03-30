@@ -100,7 +100,7 @@ export default function MessageInput({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         disabled={isLoading}
-        className="flex-1 resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        className="flex-1  resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground"
       />
 
       {/* SEND BUTTON */}

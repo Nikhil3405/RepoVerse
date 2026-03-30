@@ -29,9 +29,6 @@ async def process_diagram(prompt: str, fallback_type="flow"):
         # Step 1: Generate using LLM
         raw_output = await asyncio.to_thread(generate_answer, prompt, "")
 
-        # Debug (optional)
-        print("RAW OUTPUT:\n", raw_output)
-
         # Step 2: Clean Mermaid
         diagram = clean_mermaid(raw_output)
 
@@ -44,8 +41,6 @@ async def process_diagram(prompt: str, fallback_type="flow"):
             fallback_output = await asyncio.to_thread(generate_answer, fallback_prompt, "")
             diagram = clean_mermaid(fallback_output)
             diagram = ensure_valid_diagram(diagram)
-
-        print("FINAL DIAGRAM:\n", diagram)
 
         return diagram
 
