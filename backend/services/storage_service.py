@@ -31,7 +31,7 @@ def upload_repo(repo_id, folder_path):
         supabase.storage.from_("repos").upload(
             f"{repo_id}.zip",
             f,
-            upsert=True,
+            {"upsert": "true"}
         )
 
     os.remove(zip_path)
