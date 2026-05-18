@@ -21,8 +21,6 @@ def parse_repository(repo_path: str):
         dirs[:] = [d for d in dirs if d not in IGNORED_DIRECTORIES]
 
         for file in files:
-            if is_binary_file(file_path):
-                continue
             _, ext = os.path.splitext(file)
 
             if ext == ".xml" and size_kb > 100:
@@ -32,8 +30,8 @@ def parse_repository(repo_path: str):
                 continue
 
             file_path = os.path.join(root, file)
-
-            # 🔹 File size check
+            if is_binary_file(file_path):
+                continue
             size_kb = os.path.getsize(file_path) / 1024
 
             if size_kb > MAX_FILE_SIZE_KB:
