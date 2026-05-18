@@ -1,6 +1,7 @@
 import os 
 from git import Repo
 from config import REPO_STORAGE_PATH
+from routes.repo import delete_repository
 from utils.file_parser import parse_repository
 from utils.chunker import chunk_code
 from services.embedding_service import generate_embedding
@@ -19,7 +20,10 @@ def process_repository(repo_url: str, repo_id: str):
 
     try:
         os.makedirs(REPO_STORAGE_PATH, exist_ok=True)
+        size_mb = get_repo_size(repo_path)
 
+        if size_mb > 50:   # or from config
+            raise Exception("Repository too large")
         # 🔹 STEP 1: FETCH REPO (Smart)
         update_repo_status(repo_id, "cloning")
 
@@ -93,3 +97,12 @@ def process_repository(repo_url: str, repo_id: str):
 
         # ❌ FAILED STATE
         update_repo_status(repo_id, "failed")
+        delete_repository(repo_id)
+    
+def get_repo_size(repo_path):
+    total_size = 0
+    for dirpath, _, filenames in os.walk(repo_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            total_size += os.path.getsize(fp)
+    return total_size / (1024 * 1024)

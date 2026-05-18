@@ -21,7 +21,12 @@ def parse_repository(repo_path: str):
         dirs[:] = [d for d in dirs if d not in IGNORED_DIRECTORIES]
 
         for file in files:
+            if is_binary_file(file_path):
+                continue
+            _, ext = os.path.splitext(file)
 
+            if ext == ".xml" and size_kb > 100:
+                continue
             # 🔹 Skip invalid files (🔥 includes binary filter)
             if not is_valid_file(file):
                 continue
@@ -62,3 +67,13 @@ def parse_repository(repo_path: str):
                 print(f"Error reading {file_path}: {e}")
 
     return parsed_files
+
+def is_binary_file(file_path):
+    try:
+        with open(file_path, "rb") as f:
+            chunk = f.read(1024)
+            if b"\x00" in chunk:
+                return True
+    except:
+        return True
+    return False

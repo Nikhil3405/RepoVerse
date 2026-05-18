@@ -13,7 +13,9 @@ BLOCK_KEYWORDS = (
     "func ", "fn ",
 
     # General structures
-    "interface ", "struct ", "enum "
+    "interface ", "struct ", "enum ",
+    # Kotlin
+    "fun ", "class ", "object ", "data class ", "interface ",
 )
 
 
@@ -23,10 +25,31 @@ def is_block_start(line: str):
     return (
         any(stripped.startswith(k) for k in BLOCK_KEYWORDS)
         or stripped.endswith("{")
+        or stripped.endswith(":")   # 🔥 Python blocks
     )
 
+def merge_small_chunks(chunks, min_lines=10):
+    merged = []
+    buffer = []
+
+    for chunk in chunks:
+        lines = chunk.split("\n")
+
+        if len(lines) < min_lines:
+            buffer.extend(lines)
+        else:
+            if buffer:
+                merged.append("\n".join(buffer))
+                buffer = []
+            merged.append(chunk)
+
+    if buffer:
+        merged.append("\n".join(buffer))
+
+    return merged
 
 def chunk_code(content: str, max_lines: int = 40, overlap: int = 5):
+
     lines = content.split("\n")
 
     chunks = []
@@ -35,21 +58,24 @@ def chunk_code(content: str, max_lines: int = 40, overlap: int = 5):
     for line in lines:
         stripped = line.strip()
 
-        # 🔹 Start new chunk at logical boundaries
-        if is_block_start(stripped):
-            if current_chunk:
-                chunks.append("\n".join(current_chunk))
-                current_chunk = current_chunk[-overlap:]  # keep overlap
+        if not stripped:
+            continue
+
+        # 🔥 smarter split
+        if is_block_start(stripped) and len(current_chunk) > overlap:
+            chunks.append("\n".join(current_chunk))
+            current_chunk = current_chunk[-overlap:]
 
         current_chunk.append(line)
 
-        # 🔹 Prevent overly large chunks
         if len(current_chunk) >= max_lines:
             chunks.append("\n".join(current_chunk))
             current_chunk = current_chunk[-overlap:]
 
-    # 🔹 Add remaining chunk
     if current_chunk:
         chunks.append("\n".join(current_chunk))
+
+    # 🔥 merge small chunks
+    chunks = merge_small_chunks(chunks)
 
     return chunks

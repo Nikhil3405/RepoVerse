@@ -12,6 +12,9 @@ ALLOWED_EXTENSIONS = {
     ".py", ".js", ".jsx", ".ts", ".tsx",
     ".java", ".cpp", ".c", ".go", ".rs", ".rb", ".php",
 
+    # 🆕 Kotlin / Android
+    ".kt", ".kts",
+
     # 🔹 Web / frontend
     ".html", ".css", ".scss", ".sass",
 
@@ -65,6 +68,20 @@ IGNORED_DIRECTORIES = {
     ".parcel-cache",
     ".turbo",
     ".pytest_cache",
+    
+     # 🆕 Android / Gradle build outputs
+    ".gradle",
+    "build",
+    "captures",
+    ".externalnativebuild",
+    ".cxx",
+
+    # 🆕 Android Studio
+    ".idea",
+    ".android",
+
+    # 🆕 Kotlin cache
+    "kotlin",
 }
 
 
@@ -156,6 +173,24 @@ IMPORTANT_FILENAMES = {
 
     # 🔹 Misc
     "makefile",
+    # 🆕 Kotlin / Android important files
+    "androidmanifest.xml",
+    "build.gradle",
+    "build.gradle.kts",
+    "settings.gradle",
+    "settings.gradle.kts",
+    "gradlew",
+    "gradlew.bat",
+    "local.properties",
+    "proguard-rules.pro",
+
+    # 🆕 Android entry/activity hints
+    "mainactivity.kt",
+    "mainactivity.java",
+
+    # 🆕 Android app structure hints
+    "application.kt",
+    "application.java",
 }
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
