@@ -1,7 +1,7 @@
 import os 
 from git import Repo
+from services.repo_cleanup_service import cleanup_repository
 from config import REPO_STORAGE_PATH
-from routes.repo import delete_repository
 from utils.file_parser import parse_repository
 from utils.chunker import chunk_code
 from services.embedding_service import generate_embedding
@@ -97,7 +97,7 @@ def process_repository(repo_url: str, repo_id: str):
 
         # ❌ FAILED STATE
         update_repo_status(repo_id, "failed")
-        delete_repository(repo_id)
+        cleanup_repository(repo_id)
     
 def get_repo_size(repo_path):
     total_size = 0
