@@ -15,7 +15,9 @@ def generate_embedding(text: str):
         model=MODEL_NAME
     )
 
+    # 🔹 Handle nested output
     if isinstance(embedding[0], list):
         embedding = embedding[0]
 
-    return embedding
+    # 🔥 FIX: convert numpy → list
+    return embedding.tolist() if hasattr(embedding, "tolist") else list(embedding)
