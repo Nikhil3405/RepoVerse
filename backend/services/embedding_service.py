@@ -1,15 +1,21 @@
-from sentence_transformers import SentenceTransformer
-import numpy as np
+from huggingface_hub import InferenceClient
+import os
+from dotenv import load_dotenv
 
-# 🔹 Load model once (important for performance)
-model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+load_dotenv()
+
+client = InferenceClient(token=os.getenv("HF_TOKEN"))
+
+MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 
 def generate_embedding(text: str):
-    embedding = model.encode(
+    embedding = client.feature_extraction(
         text,
-        normalize_embeddings=True  # 🔥 improves similarity search
+        model=MODEL_NAME
     )
 
-    return embedding.tolist()
+    if isinstance(embedding[0], list):
+        embedding = embedding[0]
 
+    return embedding

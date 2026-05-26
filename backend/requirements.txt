@@ -5,4 +5,4 @@ gitpython
 supabase
 groq
 google-genai
-sentence-transformers
+huggingface_hub
