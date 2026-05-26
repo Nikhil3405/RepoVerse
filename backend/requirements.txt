@@ -6,3 +6,4 @@ supabase
 groq
 google-genai
 huggingface_hub
+numpy
