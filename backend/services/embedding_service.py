@@ -1,15 +1,15 @@
-from google import genai
-import os
-from dotenv import load_dotenv
-from google.genai import types
-load_dotenv()
+from sentence_transformers import SentenceTransformer
+import numpy as np
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# 🔹 Load model once (important for performance)
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+
 
 def generate_embedding(text: str):
-    response = client.models.embed_content(
-        model="gemini-embedding-001", 
-        contents=text,
-        config=types.EmbedContentConfig(output_dimensionality=768)
+    embedding = model.encode(
+        text,
+        normalize_embeddings=True  # 🔥 improves similarity search
     )
-    return response.embeddings[0].values
+
+    return embedding.tolist()
+
